@@ -12,6 +12,8 @@ ED_COL = 13
 ST_COL = 2
 ET_COL = 3
 
+START_ROW = 16
+END_ROW = 18
 
 ####################################
 # Fetch Smartsheet object from API #
@@ -32,7 +34,7 @@ sheet = json.loads(str(sheet)) # Convert JSON object to Python object
 #################################################
 cal = Calendar()
 
-for meeting in sheet['rows'][16:18]:
+for meeting in sheet['rows'][START_ROW:END_ROW]:
     event = Event()
 
     event.add('summary', meeting['cells'][0]['value'])
