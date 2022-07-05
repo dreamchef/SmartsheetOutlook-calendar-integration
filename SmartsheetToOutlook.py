@@ -1,10 +1,17 @@
 from email.errors import StartBoundaryNotFoundDefect
+
 from icalendar import Calendar, vCalAddress, Event, vText
 import smartsheet
 import json
 import pytz
 from datetime import datetime
 import os
+
+SD_COL = 12
+ED_COL = 13
+ST_COL = 2
+ET_COL = 3
+
 
 ####################################
 # Fetch Smartsheet object from API #
@@ -25,24 +32,27 @@ sheet = json.loads(str(sheet)) # Convert JSON object to Python object
 #################################################
 cal = Calendar()
 
-for meeting in sheet['rows'][6:11]:
+for meeting in sheet['rows'][16:18]:
     event = Event()
 
-    startTime = meeting['cells'][3]['value']
-    endTime = meeting['cells'][4]['value']
+    event.add('summary', meeting['cells'][0]['value'])
+    event.add('description', meeting['cells'][1]['value'])
+
+    startTime = meeting['cells'][ST_COL]['value']
+    endTime = meeting['cells'][ET_COL]['value']
 
     startHour = int(startTime/100)
     startMinute = int(startTime%100)
     endHour = int(endTime/100)
     endMinute = int(endTime%100)
 
-    print('from',startHour,":",startMinute,'to',endHour,":",endMinute)
+    #print('from',startHour,":",startMinute,'to',endHour,":",endMinute)
 
-    print(meeting['cells'][13]['value'])
-    print(meeting['cells'][14]['value'])
+    #print(meeting['cells'][SD_COL]['value'])
+    #print(meeting['cells'][ED_COL]['value'])
 
-    startDate = meeting['cells'][13]['value'].split('-')
-    endDate = meeting['cells'][14]['value'].split('-')
+    startDate = meeting['cells'][SD_COL]['value'].split('-')
+    endDate = meeting['cells'][ED_COL]['value'].split('-')
 
     startYear = int(startDate[0])
     startMonth = int(startDate[1])
