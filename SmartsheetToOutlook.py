@@ -42,8 +42,7 @@ for meeting in main_sheet['rows'][START_ROW:END_ROW]:
     event = Event()
 
     group = meeting['cells'][1]['value']
-    event.add('description', group)
-
+    #event.add('description', group)
     groupRow = [rowIndex for rowIndex in range(NUM_GROUPS) if group_sheet['rows'][rowIndex]['cells'][0]['value'] == group]
     categoryArray = [group_sheet['rows'][groupRow[0]]['cells'][2]['value'] + " Category"]
     event.add('categories',categoryArray)
