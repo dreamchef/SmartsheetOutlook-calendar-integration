@@ -41,25 +41,14 @@ cal = Calendar()
 for meeting in main_sheet['rows'][START_ROW:END_ROW]:
     event = Event()
 
-    categoryArray = []
-
     group = meeting['cells'][1]['value']
-
-    #print('Looking for group:',group)
-
-    print(group_sheet['rows'][0]['cells'][0]['value'])
+    event.add('description', group)
 
     groupRow = [rowIndex for rowIndex in range(NUM_GROUPS) if group_sheet['rows'][rowIndex]['cells'][0]['value'] == group]
-
-    print(groupRow)
-
     categoryArray = [group_sheet['rows'][groupRow[0]]['cells'][2]['value'] + " Category"]
-
-    meeting['cells'][1]['value']
+    event.add('categories',categoryArray)
 
     event.add('summary', meeting['cells'][0]['value'])
-    event.add('description', group)
-    event.add('categories',categoryArray)
 
     startTime = meeting['cells'][ST_COL]['value']
     endTime = meeting['cells'][ET_COL]['value']
@@ -68,11 +57,6 @@ for meeting in main_sheet['rows'][START_ROW:END_ROW]:
     startMinute = int(startTime%100)
     endHour = int(endTime/100)
     endMinute = int(endTime%100)
-
-    #print('from',startHour,":",startMinute,'to',endHour,":",endMinute)
-
-    #print(meeting['cells'][SD_COL]['value'])
-    #print(meeting['cells'][ED_COL]['value'])
 
     startDate = meeting['cells'][SD_COL]['value'].split('-')
     endDate = meeting['cells'][ED_COL]['value'].split('-')
