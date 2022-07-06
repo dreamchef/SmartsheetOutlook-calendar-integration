@@ -5,8 +5,8 @@ import json
 from datetime import datetime
 import os
 
-SD_COL = 12
-ED_COL = 13
+SD_COL = 11
+ED_COL = 12
 ST_COL = 2
 ET_COL = 3
 
@@ -71,6 +71,7 @@ for meeting in main_sheet['rows'][START_ROW:END_ROW]:
     event.add('dtstart', datetime(startYear, startMonth, startDay, startHour, startMinute, 0, 0))
     event.add('dtend', datetime(startYear, endMonth, endDay, startHour, endMinute, 0, 0))
     cal.add_component(event)
+    cal.add('x-wr-calname','Meetings from Smartsheet')
 
 #####################################
 # Write calendar events to ICS file #
