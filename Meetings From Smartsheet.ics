@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
-NAME:Meetings from Smartsheet
-NAME:Meetings from Smartsheet
+X-WR-CALNAME:Meetings from Smartsheet
+X-WR-CALNAME:Meetings from Smartsheet
 BEGIN:VEVENT
 SUMMARY:Jaren/Alyssa Weekly
 DTSTART;VALUE=DATE-TIME:20220705T143000
