@@ -1,0 +1,144 @@
+import datetime as dt
+import pandas as pd
+import win32com.client
+from smartsheet import smartsheet
+
+#Individual Access Token...Can be created on SmartSheets: Profile->Integrations->API Access->Build Token
+SMARTSHEET_ACCESS_TOKEN = "xPj6dbHDFbLBKuVqU86zBw4xI3lJPLgA3tTzT"
+
+def delete_existing_data(client, sheet, chunk_interval = 300):
+    deleteRows = [row.id for row in sheet.rows]
+    for x in range(0, len(deleteRows),chunk_interval):
+        client.Sheets.delete_rows(sheet.id,deleteRows[x:x+chunk_interval])
+
+def get_calendar(begin,end):
+    outlook = win32com.client.Dispatch('Outlook.Application').GetNamespace('MAPI')
+    calendar = outlook.getDefaultFolder(9).Folders
+    for m in calendar:
+        if m.Name == "Untitled":
+            calendar = m.Items
+            break
+        print(m.Name)
+    print(calendar)
+    calendar.IncludeRecurrences = True
+    calendar.Sort('[Start]')
+    restriction = "[Start] >= '" + begin.strftime('%m/%d/%Y') + "' AND [END] <= '" + end.strftime('%m/%d/%Y') + "'"
+    calendar = calendar.Restrict(restriction)
+    return calendar
+
+#View for 3 week period to gain all of the meetings from outlook
+begin = dt.datetime(2022,7,4)
+end = dt.datetime(2022,7,6)
+
+cal = get_calendar(begin, end)
+
+#Task Type Dictionary for updating participants based on type
+task = {
+  "label": "Interns",
+  "type": "shell",
+  "command": "Assign task",
+  "dependsOrder": "sequence",
+  "dependsOn": ["Dynamics", "Supply Chain"]
+}
+
+task2 = {
+  "label": "Dynamics",
+  "type": "shell",
+  "command": "Assign task",
+  "dependsOrder": "sequence",
+  "dependsOn": ["Interns", "Supply Chain"]
+}
+
+task3 = {
+  "label": "Supply Chain",
+  "type": "shell",
+  "command": "Assign task",
+  "dependsOrder": "sequence",
+  "dependsOn": ["Dynamics", "Interns"]
+ }
+
+
+# Find from specific sheet in smartsheet settings
+sheet_id = 1068857952626564
+
+smartsheet_client = smartsheet.Smartsheet(SMARTSHEET_ACCESS_TOKEN)
+sheet = smartsheet_client.Sheets.get_sheet(sheet_id)
+
+rows = []
+
+column_map = {}
+for column in sheet.columns:
+    column_map[column.title] = column.id
+
+row_map = {}
+i = 0
+for rows in sheet.rows:
+    row_map[i] = rows.id
+    i = i + 1
+
+for meeting in cal:
+    calStartDate = meeting.start.strftime("%m/%d/%Y")
+    calTemp = int(meeting.start.strftime("%H:%M:%S")[0:2]) % 12
+    calStartTime = meeting.start.strftime("%H:%M:%S")
+    calFinalTime = str(calTemp) + ':' + calStartTime[3:-3]
+    calEndTime = meeting.end.strftime("%H:%M:%S")
+    calEndDate = meeting.end.strftime("%m/%d/%Y")
+    calTask = meeting.body
+    calSubject = meeting.subject
+    calBody = meeting.body
+    calDuration = str(meeting.duration) + 'm'
+
+    row_a = smartsheet_client.models.Row()
+    row_a.to_top = True
+
+    row_a.cells.append({
+        'column_id': column_map['Meeting Name'],
+        'value': calSubject,
+        'strict': False
+    })
+
+    row_a.cells.append({
+        'column_id': column_map['Task Type'],
+        'value': calTask,
+        'strict': False
+    })
+
+    row_a.cells.append({
+        'column_id': column_map['Duration'],
+        'value': calDuration,
+        'strict': False
+    })
+
+    if int(calStartTime[0:2]) < 12:
+        calFinalTime += 'am'
+    else:
+        calFinalTime += 'pm'
+
+    row_a.cells.append({
+        'column_id': column_map['Start Time'],
+        'value': calFinalTime,
+        'strict': False
+    })
+
+    row_a.cells.append({
+        'column_id': column_map['Start Date'],
+        'value': calStartDate,
+        'strict': False
+    })
+
+    print(meeting.start)
+    row_a.cells.append({
+        'column_id': column_map['Comments'],
+        'value': calBody,
+        'strict': False
+    })
+    updated_row = smartsheet_client.Sheets.add_rows(sheet_id,[row_a])
+
+print("Loaded Sheet: " + sheet.name)
+print(smartsheet_client)
+# Check for any errors
+smartsheet_client.errors_as_exceptions(True)
+
+
+# result = make_cpd(appointments)
+# result.to_excel('meeting hours.xlsx')
