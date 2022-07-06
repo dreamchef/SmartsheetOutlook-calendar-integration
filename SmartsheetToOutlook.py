@@ -13,31 +13,47 @@ ET_COL = 3
 START_ROW = 17
 END_ROW = 19
 
+NUM_GROUPS = 3
+
 ####################################
 # Fetch Smartsheet object from API #
 ####################################
 SMARTSHEET_ACCESS_TOKEN = "cQRQeMelih0hMj0DHzx60l6Ggu5xcHvJvYMGU"
-sheet_id = 1068857952626564
+main_sheet_id = 1068857952626564
+
+group_sheet_id = 6814705466533764
 
 smartsheet_client = smartsheet.Smartsheet(SMARTSHEET_ACCESS_TOKEN)
-sheet = smartsheet_client.Sheets.get_sheet(sheet_id) # JSON object
+main_sheet = smartsheet_client.Sheets.get_sheet(main_sheet_id) # JSON object
+group_sheet = smartsheet_client.Sheets.get_sheet(group_sheet_id)
 
-sheet = json.loads(str(sheet)) # Convert JSON object to Python object
+main_sheet = json.loads(str(main_sheet)) # Convert JSON object to Python object
+group_sheet = json.loads(str(group_sheet))
 
-#sheet_str = json.dumps(sheet, indent=4) # Get printable string from Python object
-#print(sheet_str[:30000])
+sheet_str = json.dumps(main_sheet, indent=4) # Get printable string from Python object
+print(sheet_str[:30000])
 
 #################################################
 # Create calendar event for each Smartsheet row #
 #################################################
 cal = Calendar()
 
-for meeting in sheet['rows'][START_ROW:END_ROW]:
+for meeting in main_sheet['rows'][START_ROW:END_ROW]:
     event = Event()
 
+    categoryArray = []
+
+    group = meeting['cells'][1]['value']
+
+    groupRow = [rowIndex for rowIndex in range(NUM_GROUPS) if group_sheet['rows'][rowIndex] == group]
+
+    categoryArray = [groupRow[0] + " Category"]
+
+    meeting['cells'][1]['value']
+
     event.add('summary', meeting['cells'][0]['value'])
-    event.add('description', meeting['cells'][1]['value'])
-    event.add('category',meeting['cells'][1]['value'])
+    event.add('description', group)
+    event.add('categories',categoryArray)
 
     startTime = meeting['cells'][ST_COL]['value']
     endTime = meeting['cells'][ET_COL]['value']
