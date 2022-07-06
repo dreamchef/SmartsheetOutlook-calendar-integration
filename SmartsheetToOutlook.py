@@ -1,9 +1,7 @@
 from email.errors import StartBoundaryNotFoundDefect
-
 from icalendar import Calendar, vCalAddress, Event, vText
 import smartsheet
 import json
-import pytz
 from datetime import datetime
 import os
 
@@ -12,8 +10,8 @@ ED_COL = 13
 ST_COL = 2
 ET_COL = 3
 
-START_ROW = 16
-END_ROW = 18
+START_ROW = 17
+END_ROW = 19
 
 ####################################
 # Fetch Smartsheet object from API #
@@ -39,11 +37,12 @@ for meeting in sheet['rows'][START_ROW:END_ROW]:
 
     event.add('summary', meeting['cells'][0]['value'])
     event.add('description', meeting['cells'][1]['value'])
+    event.add('category',meeting['cells'][1]['value'])
 
     startTime = meeting['cells'][ST_COL]['value']
     endTime = meeting['cells'][ET_COL]['value']
 
-    startHour = int(startTime/100)
+    startHour = int((startTime/100)%24)
     startMinute = int(startTime%100)
     endHour = int(endTime/100)
     endMinute = int(endTime%100)
