@@ -18,7 +18,7 @@ NUM_GROUPS = 3
 ####################################
 # Fetch Smartsheet object from API #
 ####################################
-SMARTSHEET_ACCESS_TOKEN = "cQRQeMelih0hMj0DHzx60l6Ggu5xcHvJvYMGU"
+SMARTSHEET_ACCESS_TOKEN = "xPj6dbHDFbLBKuVqU86zBw4xI3lJPLgA3tTzT"
 main_sheet_id = 1068857952626564
 
 group_sheet_id = 6814705466533764
@@ -30,7 +30,7 @@ group_sheet = smartsheet_client.Sheets.get_sheet(group_sheet_id)
 main_sheet = json.loads(str(main_sheet)) # Convert JSON object to Python object
 group_sheet = json.loads(str(group_sheet))
 
-sheet_str = json.dumps(main_sheet, indent=4) # Get printable string from Python object
+sheet_str = json.dumps(group_sheet, indent=4) # Get printable string from Python object
 print(sheet_str[:30000])
 
 #################################################
@@ -45,9 +45,15 @@ for meeting in main_sheet['rows'][START_ROW:END_ROW]:
 
     group = meeting['cells'][1]['value']
 
-    groupRow = [rowIndex for rowIndex in range(NUM_GROUPS) if group_sheet['rows'][rowIndex] == group]
+    #print('Looking for group:',group)
 
-    categoryArray = [groupRow[0] + " Category"]
+    print(group_sheet['rows'][0]['cells'][0]['value'])
+
+    groupRow = [rowIndex for rowIndex in range(NUM_GROUPS) if group_sheet['rows'][rowIndex]['cells'][0]['value'] == group]
+
+    print(groupRow)
+
+    categoryArray = [group_sheet['rows'][groupRow[0]]['cells'][2]['value'] + " Category"]
 
     meeting['cells'][1]['value']
 
