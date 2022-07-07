@@ -11,10 +11,6 @@ ED_COL = 12
 ST_COL = 2
 ET_COL = 3
 
-# Range of meetings to fetch from Smartsheet
-START_ROW = 17
-END_ROW = 19
-
 ####################################
 # Fetch Smartsheet object from API #
 ####################################
@@ -38,7 +34,7 @@ group_sheet = json.loads(str(group_sheet))
 #################################################
 cal = Calendar()
 
-for meeting in main_sheet['rows'][START_ROW:END_ROW]:
+for meeting in main_sheet['rows']:
     event = Event()
 
     ### Assign correct color and name categories ###
@@ -72,7 +68,7 @@ for meeting in main_sheet['rows'][START_ROW:END_ROW]:
     endDay = int(endDate[2][:2])
 
     event.add('dtstart', datetime(startYear, startMonth, startDay, startHour, startMinute, 0, 0))
-    event.add('dtend', datetime(startYear, endMonth, endDay, startHour, endMinute, 0, 0))
+    event.add('dtend', datetime(startYear, endMonth, endDay, endHour, endMinute, 0, 0))
     ### ---------------------------------- ###
     
     cal.add_component(event)
