@@ -1,6 +1,13 @@
 import smartsheet
 import json
 
+PARTICIPANTS_COL = 16
+FLAG_COL = 4
+SD_COL = 11
+ED_COL = 12
+ST_COL = 2
+ET_COL = 3
+
 f = open('./SmartsheetAccessToken.txt')
 SMARTSHEET_ACCESS_TOKEN = f.read()
 f.close()
@@ -28,27 +35,54 @@ def findCollisions():
 
     z = 0
     for meeting in main_sheet['rows']:
-        for name in meeting['cells'][16]['value'].split(", "):
+        for name in meeting['cells'][PARTICIPANTS_COL]['value'].split(", "):
 
             for rowToTestIndex in range(len(main_sheet['rows'])):
 
-                if name in main_sheet['rows'][rowToTestIndex]['cells'][16]['value'] and z is not rowToTestIndex:
+                rowToTest = main_sheet['rows'][rowToTestIndex] 
 
-                    new_row = smartsheet.models.Row()
-                    new_row.id = row_map[z]
-                    new_row.cells.append({
-                        'column_id': column_map['Participant Collision'],
-                        'value': 1,
-                        'strict': False
-                    })
+                if name in rowToTest['cells'][PARTICIPANTS_COL]['value'] and z is not rowToTestIndex:
 
-                    rows_map.append(new_row)
+                    print('found participant conflict')
 
-                    conflict = True
+                    if meeting['cells'][SD_COL]['value'] == rowToTest['cells'][SD_COL]['value']:
 
+                        print('...found day conflict')
+
+                        start = meeting['cells'][ST_COL]['value']
+                        end = meeting['cells'][ET_COL]['value']
+                        compareStart = rowToTest['cells'][ST_COL]['value']
+                        compareEnd = rowToTest['cells'][ET_COL]['value']
+
+                        print(compareStart,start,compareEnd,'|||',compareStart,end,compareEnd)
+
+                        if (start > compareStart and start < compareEnd) or (end > compareStart and end < compareEnd) or start == compareStart or end == compareEnd:
+
+                            print('......found time conflict')
+
+                            new_row = smartsheet.models.Row()
+                            new_row.id = row_map[z]
+                            new_row.cells.append({
+                                'column_id': column_map['Collisions'],
+                                'value': 1,
+                                'strict': False
+                            })
+
+                            rows_map.append(new_row)
+
+                            conflict = True
 
                 if(conflict == True): break    
-            if(conflict == True): break  
+            if(conflict == True): break 
+        if(conflict == False):
+            new_row = smartsheet.models.Row()
+            new_row.id = row_map[z]
+            new_row.cells.append({
+                'column_id': column_map['Collisions'],
+                'value': 0,
+                'strict': False
+            })
+            rows_map.append(new_row)
         z = z + 1
         conflict = False
 
