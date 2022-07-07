@@ -14,9 +14,10 @@ ET_COL = 3
 ####################################
 # Fetch Smartsheet object from API #
 ####################################
-SMARTSHEET_ACCESS_TOKEN = "xPj6dbHDFbLBKuVqU86zBw4xI3lJPLgA3tTzT"
+f = open('./SmartsheetAccessToken.txt')
+SMARTSHEET_ACCESS_TOKEN = f.read()
+f.close()
 main_sheet_id = 1068857952626564
-
 group_sheet_id = 6814705466533764
 
 smartsheet_client = smartsheet.Smartsheet(SMARTSHEET_ACCESS_TOKEN)
