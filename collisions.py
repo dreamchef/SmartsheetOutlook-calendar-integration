@@ -30,16 +30,9 @@ def findCollisions():
     for meeting in main_sheet['rows']:
         for name in meeting['cells'][16]['value'].split(", "):
 
-            #print(meeting['cells'][16]['value'].split(", "))
-
             for rowToTestIndex in range(len(main_sheet['rows'])):
 
-                print('is',name,'in',main_sheet['rows'][rowToTestIndex]['cells'][16]['value'],'?')
-
                 if name in main_sheet['rows'][rowToTestIndex]['cells'][16]['value'] and z is not rowToTestIndex:
-
-                    print('yuh')
-                    #print("found participant conflict")
 
                     new_row = smartsheet.models.Row()
                     new_row.id = row_map[z]
@@ -48,8 +41,6 @@ def findCollisions():
                         'value': 1,
                         'strict': False
                     })
-
-                    #print(new_row)
 
                     rows_map.append(new_row)
 
