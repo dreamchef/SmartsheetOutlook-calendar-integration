@@ -1,8 +1,9 @@
 import smartsheet
 import json
 
-
-SMARTSHEET_ACCESS_TOKEN = "xPj6dbHDFbLBKuVqU86zBw4xI3lJPLgA3tTzT"
+f = open('./SmartsheetAccessToken.txt')
+SMARTSHEET_ACCESS_TOKEN = f.read()
+f.close()
 main_sheet_id = 1068857952626564
 
 def findCollisions():
@@ -16,20 +17,30 @@ def findCollisions():
     for rows in sheet.rows:
         row_map[i] = rows.id
         i = i + 1
-
         
     column_map = {}
     for column in sheet.columns:
-        column_map[column.title] = column.id   
-
+        column_map[column.title] = column.id
 
     rows_map = []
-    
+
+    conflict = False
+
     z = 0
     for meeting in main_sheet['rows']:
         for name in meeting['cells'][16]['value'].split(", "):
-            for rowToTest in main_sheet['rows']:
-                if name in rowToTest['cells'][16]['value']:
+
+            #print(meeting['cells'][16]['value'].split(", "))
+
+            for rowToTestIndex in range(len(main_sheet['rows'])):
+
+                print('is',name,'in',main_sheet['rows'][rowToTestIndex]['cells'][16]['value'],'?')
+
+                if name in main_sheet['rows'][rowToTestIndex]['cells'][16]['value'] and z is not rowToTestIndex:
+
+                    print('yuh')
+                    #print("found participant conflict")
+
                     new_row = smartsheet.models.Row()
                     new_row.id = row_map[z]
                     new_row.cells.append({
@@ -37,9 +48,20 @@ def findCollisions():
                         'value': 1,
                         'strict': False
                     })
+
+                    #print(new_row)
+
                     rows_map.append(new_row)
+
+                    conflict = True
+
+
+                if(conflict == True): break    
+            if(conflict == True): break  
         z = z + 1
-    updated_row = smartsheet_client.Sheets.update_rows(
+        conflict = False
+
+    smartsheet_client.Sheets.update_rows(
         main_sheet_id,
         rows_map
     )
