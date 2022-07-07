@@ -49,6 +49,10 @@ for meeting in main_sheet['rows']:
     ### Assign meeting title ###
     event.add('summary', meeting['cells'][0]['value'])
 
+    ### Assign description from comments in Smartsheet ###
+    if 'value' in meeting['cells'][18]:
+        event.add('description', meeting['cells'][18]['value'])
+
     ### Assign meeting start/end date/time ###
     startTime = meeting['cells'][ST_COL]['value']
     endTime = meeting['cells'][ET_COL]['value']
