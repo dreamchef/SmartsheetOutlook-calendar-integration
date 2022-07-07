@@ -51,6 +51,9 @@ def findCollisions():
 
                         start = meeting['cells'][ST_COL]['value']
                         end = meeting['cells'][ET_COL]['value']
+
+                        print(rowToTest['cells'])
+
                         compareStart = rowToTest['cells'][ST_COL]['value']
                         compareEnd = rowToTest['cells'][ET_COL]['value']
 

@@ -38,6 +38,8 @@ cal = Calendar()
 for meeting in main_sheet['rows']:
     event = Event()
 
+    print(meeting['cells'])
+
     ### Assign correct color and name categories ###
     group = meeting['cells'][1]['value']
     numGroups = len(group_sheet['rows'])
