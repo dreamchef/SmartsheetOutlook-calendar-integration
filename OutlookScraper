@@ -6,7 +6,9 @@ import win32com.client
 from smartsheet import smartsheet
 
 #Individual Access Token...Can be created on SmartSheets: Profile->Integrations->API Access->Build Token
-SMARTSHEET_ACCESS_TOKEN = "xPj6dbHDFbLBKuVqU86zBw4xI3lJPLgA3tTzT"
+f = open('./SmartsheetAccessToken.txt')
+SMARTSHEET_ACCESS_TOKEN = f.read()
+f.close()
 
 def delete_existing_data(client, sheet, chunk_interval = 300):
     deleteRows = [row.id for row in sheet.rows]
