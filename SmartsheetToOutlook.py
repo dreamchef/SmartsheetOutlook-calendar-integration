@@ -5,15 +5,15 @@ import json
 from datetime import datetime
 import os
 
+# Column numbers of dates and times
 SD_COL = 11
 ED_COL = 12
 ST_COL = 2
 ET_COL = 3
 
+# Range of meetings to fetch from Smartsheet
 START_ROW = 17
 END_ROW = 19
-
-NUM_GROUPS = 3
 
 ####################################
 # Fetch Smartsheet object from API #
@@ -30,8 +30,8 @@ group_sheet = smartsheet_client.Sheets.get_sheet(group_sheet_id)
 main_sheet = json.loads(str(main_sheet)) # Convert JSON object to Python object
 group_sheet = json.loads(str(group_sheet))
 
-sheet_str = json.dumps(group_sheet, indent=4) # Get printable string from Python object
-print(sheet_str[:30000])
+#sheet_str = json.dumps(group_sheet, indent=4) # Get printable string from Python object
+#print(sheet_str[:30000])
 
 #################################################
 # Create calendar event for each Smartsheet row #
@@ -41,15 +41,18 @@ cal = Calendar()
 for meeting in main_sheet['rows'][START_ROW:END_ROW]:
     event = Event()
 
+    ### Assign correct color and name categories ###
     group = meeting['cells'][1]['value']
-    #event.add('description', group)
-    groupRow = [rowIndex for rowIndex in range(NUM_GROUPS) if group_sheet['rows'][rowIndex]['cells'][0]['value'] == group]
+    numGroups = len(group_sheet['rows'])
+    groupRow = [rowIndex for rowIndex in range(numGroups) if group_sheet['rows'][rowIndex]['cells'][0]['value'] == group]
     categoryArray = [group_sheet['rows'][groupRow[0]]['cells'][2]['value'] + " Category"]
     categoryArray.append(group)
     event.add('categories',categoryArray)
 
+    ### Assign meeting title ###
     event.add('summary', meeting['cells'][0]['value'])
 
+    ### Assign meeting start/end date/time ###
     startTime = meeting['cells'][ST_COL]['value']
     endTime = meeting['cells'][ET_COL]['value']
 
@@ -70,6 +73,8 @@ for meeting in main_sheet['rows'][START_ROW:END_ROW]:
 
     event.add('dtstart', datetime(startYear, startMonth, startDay, startHour, startMinute, 0, 0))
     event.add('dtend', datetime(startYear, endMonth, endDay, startHour, endMinute, 0, 0))
+    ### ---------------------------------- ###
+    
     cal.add_component(event)
     cal.add('x-wr-calname','Meetings from Smartsheet')
 
