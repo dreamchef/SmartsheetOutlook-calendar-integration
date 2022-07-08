@@ -61,7 +61,7 @@ for meeting in main_sheet['rows']:
         for attendeeName in meeting['cells'][ADDITIONAL_ATTENDEES_COL]['value'].split(','):# for additional
             attendee = vCalAddress('e@rsm.com')
             attendee.params['cn'] = vText(attendeeName)
-            attendee.params['ROLE'] = vText('REQ-PARTICIPANT') # just for storage
+            attendee.params['ROLE'] = vText('OPT-PARTICIPANT') # just for storage
             event.add('attendee',attendee,encode=0)
 
     ### Assign meeting start/end date/time ###
