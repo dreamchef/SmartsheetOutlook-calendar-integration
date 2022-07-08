@@ -4,6 +4,7 @@ from types import NoneType
 import pandas as pd
 import win32com.client
 from smartsheet import smartsheet
+import collisions
 
 #Individual Access Token...Can be created on SmartSheets: Profile->Integrations->API Access->Build Token
 f = open('./SmartsheetAccessToken.txt')
@@ -33,8 +34,8 @@ def get_calendar(begin,end):
         print(m.Name)
 
 #View for 3 week period to gain all of the meetings from outlook
-begin = dt.datetime(2022,7,4)
-end = dt.datetime(2022,7,6)
+begin = dt.datetime(2022,7,1)
+end = dt.datetime(2022,7,10)
 
 cal = get_calendar(begin, end)
 
@@ -83,6 +84,9 @@ if(cal is not None):
         calTemp = int(meeting.start.strftime("%H:%M:%S")[0:2]) % 12
         calStartTime = meeting.start.strftime("%H:%M:%S")
         calFinalTime = str(calTemp) + ':' + calStartTime[3:-3]
+        temp = meeting.RequiredAttendees.split('; ')
+        temp = meeting.RequiredAttendees.split(', ')
+        calAdditionalPart = temp.replace(";",',')
         calEndTime = meeting.end.strftime("%H:%M:%S")
         calEndDate = meeting.end.strftime("%m/%d/%Y")
 
@@ -150,11 +154,17 @@ if(cal is not None):
             'strict': False
         })
         
-        row_a.cells.append({
-            'column_id': column_map['Participants'],
-            'formula': '=VLOOKUP([Task Type]@row, {Group Members}, 2, false)',
-            'strict' : False
-        })
+        # row_a.cells.append({
+        #     'column_id': column_map['Participants'],
+        #     'formula': '=VLOOKUP([Task Type]@row, {Group Members}, 2, false)',
+        #     'strict' : False
+        # })
+
+        # row_a.cells.append({
+        #     'column_id': column_map['Additional Attendees'],
+        #     'value': calAdditionalPart,
+        #     'strict': False
+        # })
 
         row_a.cells.append({
             'column_id': column_map['Comments'],
@@ -165,7 +175,7 @@ if(cal is not None):
 
     delete_existing_data(smartsheet_client,sheet,300)
     updated_row = smartsheet_client.Sheets.add_rows(sheet_id,rows_array)
-    collisions.findCollisions()
+    # collisions.findCollisions()
     print("Loaded Sheet: " + sheet.name)
 else:
     print("Import a calendar from smartsheets using SmartsheetToOutlook.py")
