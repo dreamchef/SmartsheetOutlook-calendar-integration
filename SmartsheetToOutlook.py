@@ -77,7 +77,7 @@ for meeting in main_sheet['rows']:
     event.add('dtstart', datetime(startYear, startMonth, startDay, startHour, startMinute, 0, 0))
     event.add('dtend', datetime(startYear, endMonth, endDay, endHour, endMinute, 0, 0))
     ### ---------------------------------- ###
-    
+
     cal.add_component(event)
     cal.add('x-wr-calname','Meetings from Smartsheet')
 
