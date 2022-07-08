@@ -84,9 +84,7 @@ if(cal is not None):
         calTemp = int(meeting.start.strftime("%H:%M:%S")[0:2]) % 12
         calStartTime = meeting.start.strftime("%H:%M:%S")
         calFinalTime = str(calTemp) + ':' + calStartTime[3:-3]
-        temp = meeting.RequiredAttendees.split('; ')
-        temp = meeting.RequiredAttendees.split(', ')
-        calAdditionalPart = temp.replace(";",',')
+        calAdditionalPart = meeting.OptionalAttendees.replace(";",',')
         calEndTime = meeting.end.strftime("%H:%M:%S")
         calEndDate = meeting.end.strftime("%m/%d/%Y")
 
@@ -159,12 +157,13 @@ if(cal is not None):
         #     'formula': '=VLOOKUP([Task Type]@row, {Group Members}, 2, false)',
         #     'strict' : False
         # })
-
-        # row_a.cells.append({
-        #     'column_id': column_map['Additional Attendees'],
-        #     'value': calAdditionalPart,
-        #     'strict': False
-        # })
+        calAdditionalPart = calAdditionalPart.split(', ')
+        print(calAdditionalPart)
+        row_a.cells.append({
+            'column_id': column_map['Additional Attendees'],
+            'object_value':{'objectType': 'MULTI_PICKLIST', 'values': calAdditionalPart},
+            'strict': False
+        })
 
         row_a.cells.append({
             'column_id': column_map['Comments'],
