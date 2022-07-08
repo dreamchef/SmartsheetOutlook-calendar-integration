@@ -40,8 +40,6 @@ cal = Calendar()
 for meeting in main_sheet['rows']:
     event = Event()
 
-    #print(meeting['cells'])
-
     ### Assign correct color and name categories ###
     group = meeting['cells'][1]['value']
     numGroups = len(group_sheet['rows'])
@@ -58,8 +56,6 @@ for meeting in main_sheet['rows']:
         event.add('description', meeting['cells'][COMMENTS_COL]['value'])
 
     ### Add additional participants to calendar ###
-    print('give me the attendee',meeting['cells'][ADDITIONAL_ATTENDEES_COL])
-
     if 'value' in meeting['cells'][ADDITIONAL_ATTENDEES_COL]: # if additional parts col not empty
         for attendeeName in meeting['cells'][ADDITIONAL_ATTENDEES_COL]['value'].split(','):# for additional
             attendee = vCalAddress('e@rsm.com')
