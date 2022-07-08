@@ -10,6 +10,8 @@ SD_COL = 11
 ED_COL = 12
 ST_COL = 2
 ET_COL = 3
+ADDITIONAL_ATTENDEES_COL = 17
+COMMENTS_COL = 18
 
 ####################################
 # Fetch Smartsheet object from API #
@@ -38,7 +40,7 @@ cal = Calendar()
 for meeting in main_sheet['rows']:
     event = Event()
 
-    print(meeting['cells'])
+    #print(meeting['cells'])
 
     ### Assign correct color and name categories ###
     group = meeting['cells'][1]['value']
@@ -52,8 +54,18 @@ for meeting in main_sheet['rows']:
     event.add('summary', meeting['cells'][0]['value'])
 
     ### Assign description from comments in Smartsheet ###
-    if 'value' in meeting['cells'][18]:
-        event.add('description', meeting['cells'][18]['value'])
+    if 'value' in meeting['cells'][COMMENTS_COL]:
+        event.add('description', meeting['cells'][COMMENTS_COL]['value'])
+
+    ### Add additional participants to calendar ###
+    print('give me the attendee',meeting['cells'][ADDITIONAL_ATTENDEES_COL])
+
+    if 'value' in meeting['cells'][ADDITIONAL_ATTENDEES_COL]: # if additional parts col not empty
+        for attendeeName in meeting['cells'][ADDITIONAL_ATTENDEES_COL]['value'].split(','):# for additional
+            attendee = vCalAddress('e@rsm.com')
+            attendee.params['cn'] = vText(attendeeName)
+            attendee.params['ROLE'] = vText('REQ-PARTICIPANT') # just for storage
+            event.add('attendee',attendee,encode=0)
 
     ### Assign meeting start/end date/time ###
     startTime = meeting['cells'][ST_COL]['value']
