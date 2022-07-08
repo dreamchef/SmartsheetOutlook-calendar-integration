@@ -10,8 +10,8 @@ SD_COL = 11
 ED_COL = 12
 ST_COL = 2
 ET_COL = 3
-ADDITIONAL_ATTENDEES_COL = 17
-COMMENTS_COL = 18
+ADDITIONAL_ATTENDEES_COL = 16
+COMMENTS_COL = 17
 
 ####################################
 # Fetch Smartsheet object from API #
