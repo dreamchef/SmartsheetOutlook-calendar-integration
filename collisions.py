@@ -81,48 +81,52 @@ def findCollisions():
                 if(conflict == True): break    
             if(conflict == True): break 
 
-        for name in meeting['cells'][ADDITIONAL_ATTENDEES_COL]['value'].split(", "):
+        if 'value' in meeting['cells'][ADDITIONAL_ATTENDEES_COL]:
 
-            for rowToTestIndex in range(len(main_sheet['rows'])):
+            for name in meeting['cells'][ADDITIONAL_ATTENDEES_COL]['value'].split(", "):
 
-                rowToTest = main_sheet['rows'][rowToTestIndex] 
+                for rowToTestIndex in range(len(main_sheet['rows'])):
 
-                if name in rowToTest['cells'][ADDITIONAL_ATTENDEES_COL]['value'] and z is not rowToTestIndex:
+                    rowToTest = main_sheet['rows'][rowToTestIndex]
 
-                    print('found additional participant conflict')
+                    if 'value' in rowToTest['cells'][ADDITIONAL_ATTENDEES_COL]:
 
-                    if meeting['cells'][SD_COL]['value'] == rowToTest['cells'][SD_COL]['value']:
+                        if name in rowToTest['cells'][ADDITIONAL_ATTENDEES_COL]['value'] and z is not rowToTestIndex:
 
-                        print('...found day conflict')
+                            print('found additional participant conflict')
 
-                        start = meeting['cells'][ST_COL]['value']
-                        end = meeting['cells'][ET_COL]['value']
+                            if meeting['cells'][SD_COL]['value'] == rowToTest['cells'][SD_COL]['value']:
 
-                        print(rowToTest['cells'])
+                                print('...found day conflict')
 
-                        compareStart = rowToTest['cells'][ST_COL]['value']
-                        compareEnd = rowToTest['cells'][ET_COL]['value']
+                                start = meeting['cells'][ST_COL]['value']
+                                end = meeting['cells'][ET_COL]['value']
 
-                        print(compareStart,start,compareEnd,'|||',compareStart,end,compareEnd)
+                                print(rowToTest['cells'])
 
-                        if (start > compareStart and start < compareEnd) or (end > compareStart and end < compareEnd) or start == compareStart or end == compareEnd:
+                                compareStart = rowToTest['cells'][ST_COL]['value']
+                                compareEnd = rowToTest['cells'][ET_COL]['value']
 
-                            print('......found time conflict')
+                                print(compareStart,start,compareEnd,'|||',compareStart,end,compareEnd)
 
-                            new_row = smartsheet.models.Row()
-                            new_row.id = row_map[z]
-                            new_row.cells.append({
-                                'column_id': column_map['Collisions'],
-                                'value': 1,
-                                'strict': False
-                            })
+                                if (start > compareStart and start < compareEnd) or (end > compareStart and end < compareEnd) or start == compareStart or end == compareEnd:
 
-                            rows_map.append(new_row)
+                                    print('......found time conflict')
 
-                            conflict = True
+                                    new_row = smartsheet.models.Row()
+                                    new_row.id = row_map[z]
+                                    new_row.cells.append({
+                                        'column_id': column_map['Collisions'],
+                                        'value': 1,
+                                        'strict': False
+                                    })
 
-                if(conflict == True): break    
-            if(conflict == True): break 
+                                    rows_map.append(new_row)
+
+                                    conflict = True
+
+                    if(conflict == True): break    
+                if(conflict == True): break 
 
         if(conflict == False):
             new_row = smartsheet.models.Row()
