@@ -8,7 +8,9 @@ import collisions
 
 #Individual Access Token...Can be created on SmartSheets: Profile->Integrations->API Access->Build Token
 f = open('./SmartsheetAccessToken.txt')
-SMARTSHEET_ACCESS_TOKEN = f.read()
+SMARTSHEET_ACCESS_TOKEN = f.readline()[:-1]
+START_DATE = f.readline()[:-1]
+END_DATE = f.readline()
 f.close()
 
 def delete_existing_data(client, sheet, chunk_interval = 300):
@@ -34,8 +36,8 @@ def get_calendar(begin,end):
         print(m.Name)
 
 #View for 3 week period to gain all of the meetings from outlook
-begin = dt.datetime(2022,7,1)
-end = dt.datetime(2022,7,10)
+begin = dt.datetime.strptime(START_DATE, '%m/%d/%Y')
+end = dt.datetime.strptime(END_DATE, '%m/%d/%Y')
 
 cal = get_calendar(begin, end)
 
@@ -157,6 +159,7 @@ if(cal is not None):
         #     'formula': '=VLOOKUP([Task Type]@row, {Group Members}, 2, false)',
         #     'strict' : False
         # })
+
         calAdditionalPart = calAdditionalPart.split(', ')
         print(calAdditionalPart)
         row_a.cells.append({
@@ -174,7 +177,7 @@ if(cal is not None):
 
     delete_existing_data(smartsheet_client,sheet,300)
     updated_row = smartsheet_client.Sheets.add_rows(sheet_id,rows_array)
-    # collisions.findCollisions()
+    collisions.findCollisions()
     print("Loaded Sheet: " + sheet.name)
 else:
     print("Import a calendar from smartsheets using SmartsheetToOutlook.py")
