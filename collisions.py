@@ -12,7 +12,9 @@ ST_COL = 2
 ET_COL = 3
 
 f = open('./SmartsheetAccessToken.txt')
-SMARTSHEET_ACCESS_TOKEN = f.read()
+SMARTSHEET_ACCESS_TOKEN = f.readline()[:-1]
+START_DATE = f.readline()[:-1]
+END_DATE = f.readline()
 f.close()
 main_sheet_id = 1068857952626564
 
@@ -144,5 +146,3 @@ def findCollisions():
         main_sheet_id,
         rows_map
     )
-
-findCollisions()
