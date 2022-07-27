@@ -17,7 +17,9 @@ COMMENTS_COL = 17
 # Fetch Smartsheet object from API #
 ####################################
 f = open('./SmartsheetAccessToken.txt')
-SMARTSHEET_ACCESS_TOKEN = f.read()
+SMARTSHEET_ACCESS_TOKEN = f.readline()[:-1]
+START_DATE = f.readline()[:-1]
+END_DATE = f.readline()[:-1]
 f.close()
 main_sheet_id = 1068857952626564
 group_sheet_id = 6814705466533764
