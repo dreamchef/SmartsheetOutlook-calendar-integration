@@ -11,6 +11,7 @@ ED_COL = 12
 ST_COL = 2
 ET_COL = 3
 ADDITIONAL_ATTENDEES_COL = 16
+PARTICIPANTS_COL = 15
 COMMENTS_COL = 17
 
 ####################################
@@ -65,6 +66,22 @@ for meeting in main_sheet['rows']:
             attendee.params['cn'] = vText(attendeeName)
             attendee.params['ROLE'] = vText('OPT-PARTICIPANT') # just for storage
             event.add('attendee',attendee,encode=0)
+
+    ### Add required participants to calendar ###
+
+    if 'value' in meeting['cells'][PARTICIPANTS_COL]: # if additional parts col not empty
+        for attendeeName in meeting['cells'][PARTICIPANTS_COL]['value'].split(','):# for additional
+            if(len(attendeeName.split(': ')) > 1):
+                print(len(attendeeName.split(': ')))
+                req = vCalAddress(attendeeName.split(': ')[1].replace('<','').replace('>',''))
+                req.params['cn'] = vText(attendeeName.split(': ')[0].replace(': ', ' '))
+                req.params['ROLE'] = vText('REQ-PARTICIPANT') # just for storage
+            else:
+                req = vCalAddress('e@rsm.com')
+                req.params['cn'] = vText(attendeeName)
+                req.params['ROLE'] = vText('REQ-PARTICIPANT') # just for storage
+            
+            event.add('attendee',req,encode=0)
 
     ### Assign meeting start/end date/time ###
     startTime = meeting['cells'][ST_COL]['value']
