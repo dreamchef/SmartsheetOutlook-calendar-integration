@@ -11,7 +11,7 @@ ED_COL = 12
 ST_COL = 2
 ET_COL = 3
 
-f = open('./SmartsheetAccessToken.txt')
+f = open('../SmartsheetAccessToken.txt')
 SMARTSHEET_ACCESS_TOKEN = f.readline()[:-1]
 START_DATE = f.readline()[:-1]
 END_DATE = f.readline()

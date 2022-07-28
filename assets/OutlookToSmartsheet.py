@@ -7,7 +7,7 @@ from smartsheet import smartsheet
 import collisions
 
 #Individual Access Token...Can be created on SmartSheets: Profile->Integrations->API Access->Build Token
-f = open('./SmartsheetAccessToken.txt')
+f = open('../SmartsheetAccessToken.txt')
 SMARTSHEET_ACCESS_TOKEN = f.readline()[:-1]
 START_DATE = f.readline()[:-1]
 END_DATE = f.readline()
